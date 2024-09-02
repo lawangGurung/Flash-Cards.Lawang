@@ -1,36 +1,14 @@
-﻿// using System.Configuration;
-// using Dapper;
-// using Microsoft.Data.SqlClient;
-
-// Console.WriteLine("Hello, World!");
-// string? connectionString = ConfigurationManager.AppSettings.Get("ConnectionString");
-// try
-// {
-//     using SqlConnection connection = new SqlConnection(connectionString);
-//     connection.Open();
-//         string createSQL = 
-//             @"IF NOT EXISTS (
-//             SELECT * FROM sys.tables
-//             WHERE name = 'cards' AND schema_id = SCHEMA_ID('dbo')
-//             )
-//             BEGIN
-//                 CREATE TABLE cards
-//                     (Id INT PRIMARY KEY IDENTITY(1, 1),
-//                     Topic VARCHAR(20)
-//                     );
-//             END";
-
-
-//         connection.Execute(createSQL);
-
-//     connection.Close();
-// }
-// catch (SqlException ex)
-// {
-//     Console.WriteLine(ex.Message);
-// }
-
+﻿using System.Configuration;
 using Flash_Cards.Lawang;
+using Flash_Cards.Lawang.Controller;
+using Flash_Cards.Lawang.Views;
 
-var manager = new ApplicationManager();
-manager.MainMenu();
+string connectionString = ConfigurationManager.ConnectionStrings["Sql"].ConnectionString;
+var visualize = new Visualize();
+var validation = new Validation();
+
+var codingController  = new CodingController(connectionString);
+codingController.createTables();
+
+var manager = new ApplicationManager(visualize, validation, codingController);
+manager.Start();

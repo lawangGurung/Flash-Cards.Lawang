@@ -15,6 +15,27 @@ public class Visualize
             .Border(BoxBorder.Double)
             .Expand();
 
-        AnsiConsole.Write(panel);        
+        AnsiConsole.Write(panel);
+    }
+    public void RenderResult(int rowsAffected)
+    {
+        if (rowsAffected == 1)
+        {
+            ShowResult("green", rowsAffected);
+        }
+        else
+        {
+            ShowResult("red", rowsAffected);
+        }
+    }
+    private void ShowResult(string color, int rowsAffected)
+    {
+        Panel panel = new Panel(new Markup($"[{color} bold]{rowsAffected} rows Affected[/]\n[grey](Press 'Enter' to Continue.)[/]"))
+                        .Padding(1, 1, 1, 1)
+                        .Header("Result")
+                        .Border(BoxBorder.Rounded);
+
+        AnsiConsole.Write(panel);
+        Console.ReadLine();
     }
 }
