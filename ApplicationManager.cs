@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Serialization;
 using Flash_Cards.Lawang.Controller;
 using Flash_Cards.Lawang.Models;
 using Flash_Cards.Lawang.Views;
@@ -9,12 +10,14 @@ public class ApplicationManager
 {
     private Visualize _visual;
     private Validation _validation;
-    private CodingController _codingController;
-    public ApplicationManager(Visualize visual, Validation validation, CodingController codingController)
+    private StackController _stackController;
+    private FlashCardController _flashCardController;
+    public ApplicationManager(Visualize visual, Validation validation, StackController stackController, FlashCardController flashCardController)
     {
         _visual = visual;
         _validation = validation;
-        _codingController = codingController;
+        _stackController = stackController;
+        _flashCardController = flashCardController;
     }
 
     public void Start()
@@ -50,11 +53,16 @@ public class ApplicationManager
         {
             case 1:
                 Console.Clear();
-                ManageStacks();
+                var manageStack = new ManageStacks(_validation, _visual, _stackController);
+                manageStack.OperationMenu();
                 break;
 
             case 2:
+                Console.Clear();
+                var manageFlashCard = new ManageFlashCards(_validation, _visual, _flashCardController);
+                manageFlashCard.OperationMenu();
                 break;
+
             case 3:
                 break;
             case 4:
@@ -65,50 +73,5 @@ public class ApplicationManager
         return false;
 
     }
-
-    private void ManageStacks()
-    {
-        List<Option> listOfOption = new List<Option>()
-        {
-            new Option("Create Stack.", 1),
-            new Option("Update Stack.", 2),
-            new Option("Delete Stack.", 3),
-            new Option("Exit.", 4)
-        };
-        bool exitOption = false;
-        do
-        {
-            var option = _validation.ChooseOption(listOfOption, "STACK OPTIONS");
-            switch (option.Value)
-            {
-                case 1:
-                    CreateStack();
-
-
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    exitOption = true;
-                    break;
-            }
-            Console.Clear();
-        } while (!exitOption);
-
-    }
-
-    private void CreateStack()
-    {
-        string? userInput = _validation.ValidateStackName();
-        if (userInput == null)
-        {
-            return;
-        }
-
-        int rowsAffected = _codingController.CreateStack(userInput);
-
-        _visual.RenderResult(rowsAffected); 
-    }
+   
 }

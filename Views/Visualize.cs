@@ -38,4 +38,46 @@ public class Visualize
         AnsiConsole.Write(panel);
         Console.ReadLine();
     }
+
+    public void RenderStackTable(List<Stack> listOfStack)
+    {
+        if(listOfStack.Count() == 0)
+        {
+            Panel nullPanel = new Panel(new Markup("[red bold]STACK TABLE IS EMPTY!!![/]"))
+                .Border(BoxBorder.Heavy)
+                .BorderColor(Color.IndianRed1_1)
+                .Padding(1, 1, 1, 1)
+                .Header("Result");
+
+            
+            AnsiConsole.Write(nullPanel);
+            Console.ReadLine();
+            return;
+        }
+
+        var table = new Table()
+            .Border(TableBorder.Rounded)
+            .Expand()
+            .BorderColor(Color.Aqua)
+            .ShowRowSeparators();
+
+
+
+        table.AddColumns(new TableColumn[]
+        {
+            new TableColumn("[darkgreen]Id[/]").Centered(),
+            new TableColumn("[darkcyan]Stack Name[/]").Centered()
+        });
+
+        foreach(var stack in listOfStack)
+        {
+            table.AddRow(
+                new Markup($"[cyan1]{stack.Id}[/]").Centered(),
+                new Markup($"[turquoise2]{stack.Name}[/]").Centered()
+            );
+        }
+
+        AnsiConsole.Write(table);
+
+    }
 }

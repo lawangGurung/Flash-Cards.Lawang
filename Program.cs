@@ -7,8 +7,11 @@ string connectionString = ConfigurationManager.ConnectionStrings["Sql"].Connecti
 var visualize = new Visualize();
 var validation = new Validation();
 
-var codingController  = new CodingController(connectionString);
-codingController.createTables();
+var stackController  = new StackController(connectionString);
+stackController.CreateStackTable();
 
-var manager = new ApplicationManager(visualize, validation, codingController);
+var flashCardController = new FlashCardController(connectionString);
+flashCardController.CreateFlashCardTable();
+
+var manager = new ApplicationManager(visualize, validation, stackController, flashCardController);
 manager.Start();
