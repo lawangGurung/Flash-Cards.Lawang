@@ -37,7 +37,7 @@ public class ApplicationManager
                 new Option("Exit", 0)
             };
 
-            var option = _validation.ChooseOption(listOfOptions, "Menu Options");
+            var option = _validation.ChooseOption(listOfOptions, "Menu Options", "[bold cyan underline]What [green]opertion[/] do you want to perform?[/]");
             exitApp = performOperation(option);
             Console.Clear();
         } while (!exitApp);
@@ -59,7 +59,8 @@ public class ApplicationManager
 
             case 2:
                 Console.Clear();
-                var manageFlashCard = new ManageFlashCards(_validation, _visual, _flashCardController);
+                var stackList = _stackController.GetAllStacks();
+                var manageFlashCard = new ManageFlashCards(_validation, _visual, _flashCardController, stackList);
                 manageFlashCard.OperationMenu();
                 break;
 

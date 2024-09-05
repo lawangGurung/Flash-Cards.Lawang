@@ -8,13 +8,13 @@ namespace Flash_Cards.Lawang;
 
 public class Validation
 {
-    public Option ChooseOption(List<Option> listOfOptions, string title)
+    public Option ChooseOption(List<Option> listOfOptions, string heading, string title)
     {
-        AnsiConsole.Write(new Rule($"[blue]{title}[/]").LeftJustified().RuleStyle("red"));
+        AnsiConsole.Write(new Rule($"[blue]{heading}[/]").LeftJustified().RuleStyle("red"));
 
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<Option>()
-            .Title("\n[bold cyan underline]What [green]opertion[/] do you want to perform?[/]")
+            .Title($"\n{title}")
             .UseConverter<Option>(c => c.Display)
             .MoreChoicesText("[grey](press UP and DOWN key to navigate)[/]")
             .AddChoices(listOfOptions)
@@ -25,7 +25,7 @@ public class Validation
         return selection;
     }
 
-    public string? ValidateStackName()
+    public string? ValidateStackName(List<Stack> listOfStack)
     {
         AnsiConsole.MarkupLine("[green bold]Give the [cyan1]Stack Name[/]?.[/]");
         AnsiConsole.MarkupLine("[grey](press '0' to go back to menu)[/]");
@@ -36,6 +36,11 @@ public class Validation
             if (userInput == "0")
             {
                 return null;
+            }
+            else if (listOfStack.FirstOrDefault(s => s.Name.ToLower() == userInput?.ToLower()) != null)
+            {
+                AnsiConsole.MarkupLine($"[red bold]Stack Name '{userInput}'is already present[/]");
+                userInput = Console.ReadLine()?.Trim();
             }
             else if (!string.IsNullOrEmpty(userInput))
             {
@@ -88,25 +93,38 @@ public class Validation
         } while (true);
     }
 
-    public Stack? UpdateStackName(Stack stack)
+    public Stack? UpdateStackName(Stack stack, List<Stack> stackList)
     {
         Console.Clear();
         AnsiConsole.MarkupLine("[grey](Press '0' to go back.)[/]");
         AnsiConsole.MarkupLine($"[bold]Enter the new [red]Stack Name[/] for [green]Id[/] ({stack.Id}): [/]");
         string? userInput = Console.ReadLine()?.Trim();
-        if (userInput == "0")
-        {
-            return null;
-        }
+
+
 
         do
         {
-            if (!string.IsNullOrEmpty(userInput))
+            if (userInput == "0")
             {
-                stack.Name = userInput;
-                return stack;
+                return null;
             }
-            AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
+            else if (!string.IsNullOrEmpty(userInput))
+            {
+                if (stackList.FirstOrDefault(s => s.Name == userInput) != null)
+                {
+                    AnsiConsole.MarkupLine($"[red bold]{userInput} already exist in Stack list.[/]");
+                }
+                else
+                {
+                    stack.Name = userInput;
+                    return stack;
+                }
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
+            }
+
             userInput = Console.ReadLine()?.Trim();
         } while (true);
     }
@@ -145,6 +163,71 @@ public class Validation
             }
         } while (true);
 
+    }
+
+    public string? ValidateFlashCard(string title, Option? chosenStack = null)
+    {
+        Console.Clear();
+        AnsiConsole.MarkupLine("[grey](Press '0' to go back.)[/]");
+        if(chosenStack != null)
+        {
+            AnsiConsole.MarkupLine($"[bold]Enter the [red]{title}[/] for [green]{chosenStack.Display}[/]: [/]");
+        }
+        else
+        {
+            AnsiConsole.Markup($"[bold]Enter the [red]{title}[/]: [/]");
+        }
+        string? userInput = Console.ReadLine()?.Trim();
+        do
+        {
+            if (userInput == "0")
+            {
+                return null;
+            }
+            else if (!string.IsNullOrEmpty(userInput))
+            {
+                return userInput;
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
+                userInput = Console.ReadLine()?.Trim();
+            }
+        } while (true);
+    }
+
+    public FlashCardDTO? ValidateEdit(List<FlashCardDTO> flashCardDTO)
+    {
+        AnsiConsole.MarkupLine("[grey](Press '0' to go back.)[/]");
+        AnsiConsole.Markup("[bold]Enter the [blue]S.No[/] of the flash card u want to edit: [/]");
+        string? userInput = Console.ReadLine()?.Trim();
+        int serialNo = 0;
+        do
+        {
+            if (userInput == "0")
+            {
+                return null;
+            }
+            else if (!string.IsNullOrEmpty(userInput) && int.TryParse(userInput, out serialNo))
+            {
+                if (flashCardDTO.Count() >= serialNo)
+                {
+                    return flashCardDTO[serialNo - 1];
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine($"[red bold]S.No {serialNo} does not exist[/]");
+                    userInput = Console.ReadLine()?.Trim();
+                }
+            }
+            else
+            {
+
+                AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
+                userInput = Console.ReadLine()?.Trim();
+            }
+
+        } while (true);
     }
 
 }

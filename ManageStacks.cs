@@ -30,7 +30,7 @@ public class ManageStacks
         bool exitOption = false;
         do
         {
-            var option = _validation.ChooseOption(listOfOption, "STACK OPTIONS");
+            var option = _validation.ChooseOption(listOfOption, "STACK OPTIONS", "[bold cyan underline]What [green]opertion[/] do you want to perform?[/]");
             switch (option.Value)
             {
                 case 1:
@@ -61,11 +61,13 @@ public class ManageStacks
 
     private void CreateStack()
     {
-        string? userInput = _validation.ValidateStackName();
+        var stackList = _stackController.GetAllStacks();
+        string? userInput = _validation.ValidateStackName(stackList);
         if (userInput == null)
         {
             return;
         }
+        
 
         int rowsAffected = _stackController.CreateStack(userInput);
 
@@ -84,7 +86,7 @@ public class ManageStacks
             return;
         }
 
-        Stack? updateStack = _validation.UpdateStackName(stack);
+        Stack? updateStack = _validation.UpdateStackName(stack, stackList);
         if (updateStack == null)
         {
             return;

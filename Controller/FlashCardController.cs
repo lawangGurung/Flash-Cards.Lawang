@@ -1,4 +1,5 @@
 using Dapper;
+using Flash_Cards.Lawang.Models;
 using Microsoft.Data.SqlClient;
 
 namespace Flash_Cards.Lawang.Controller;
@@ -39,11 +40,14 @@ public class FlashCardController
         }
     }
 
-    public List<FlashCard> GetAllFlashCard()
+    public List<FlashCard> GetAllFlashCard(Option chosenStack)
     {
         try
         {
             using var connection = new SqlConnection(_connectionString);
+            string getAllSQL = $@"SELECT * FROM flashcards WHERE StackId = {chosenStack.Value}";
+
+            return connection.Query<FlashCard>(getAllSQL).ToList();
         }
         catch(SqlException ex)
         {
@@ -51,5 +55,49 @@ public class FlashCardController
         }
 
         return new List<FlashCard>();
+    }
+
+    public int CreateFlashCard(FlashCardDTO flashCardDTO, int Id)
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            string createSQL = 
+                @"INSERT INTO flashcards
+                (Front, Back, StackId)
+                VALUES (@front, @back, @id)";
+
+            var param = new {@front = flashCardDTO.Front, @back = flashCardDTO.Back, @id = Id};
+
+            return connection.Execute(createSQL, param);
+        }
+        catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return 0;
+    }
+
+    public int UpdateFlashCard(FlashCardDTO flashCardDTO)
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            string updateSQL = 
+                @"UPDATE flashcards
+                SET Front = @front,
+                Back = @back
+                WHERE Id = @id";
+
+            var param = new {@id = flashCardDTO.Id, @front = flashCardDTO.Front, @back = flashCardDTO.Back};
+
+            return connection.Execute(updateSQL, param);
+
+        }catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return 0;
     }
 }
