@@ -196,10 +196,10 @@ public class Validation
         } while (true);
     }
 
-    public FlashCardDTO? ValidateEdit(List<FlashCardDTO> flashCardDTO)
+    public FlashCardDTO? ValidateEditOrDelete(List<FlashCardDTO> flashCardDTO, string action)
     {
         AnsiConsole.MarkupLine("[grey](Press '0' to go back.)[/]");
-        AnsiConsole.Markup("[bold]Enter the [blue]S.No[/] of the flash card u want to edit: [/]");
+        AnsiConsole.Markup($"[bold]Enter the [blue]S.No[/] of the flash card u want to {action}: [/]");
         string? userInput = Console.ReadLine()?.Trim();
         int serialNo = 0;
         do

@@ -81,6 +81,8 @@ public class ManageFlashCards
                     EditFlashCard(chosenStack);
                     break;
                 case 5:
+                    ViewAllFlashCards(chosenStack);
+                    DeleteFlashCard(chosenStack);
                     break;
                 case 0:
                     exitOption = true;
@@ -95,6 +97,7 @@ public class ManageFlashCards
         var flashCards = _flashCardController.GetAllFlashCard(chosenStack);
         var flashCardDTOs = ConvertToDTO(flashCards);
         _visual.RenderFlashCardTable(flashCardDTOs);
+        
     }
     private List<FlashCardDTO> ConvertToDTO(List<FlashCard> flashCards)
     {
@@ -142,10 +145,14 @@ public class ManageFlashCards
     {
         var flashCards = _flashCardController.GetAllFlashCard(chosenStack);
 
-        if (flashCards.Count() == 0) return;
+        if (flashCards.Count() == 0)
+        {
+            Console.ReadLine();
+            return;
+        }
 
         var flashCardsDTO = ConvertToDTO(flashCards);
-        var editFlashCard = _validation.ValidateEdit(flashCardsDTO);
+        var editFlashCard = _validation.ValidateEditOrDelete(flashCardsDTO, "edit");
         if (editFlashCard == null)
         {
             return;
@@ -162,6 +169,26 @@ public class ManageFlashCards
 
         int affectedRow = _flashCardController.UpdateFlashCard(editFlashCard);
 
+        _visual.RenderResult(affectedRow);
+    }
+
+    private void DeleteFlashCard(Option chosenStack)
+    {
+        var flashCards = _flashCardController.GetAllFlashCard(chosenStack);
+        if(flashCards.Count() == 0)
+        {
+            Console.ReadLine();
+            return;
+        } 
+
+        var flashCardsDTO = ConvertToDTO(flashCards);
+        var deleteFlashCard = _validation.ValidateEditOrDelete(flashCardsDTO, "delete"); 
+        if(deleteFlashCard == null)
+        {
+            return;
+        }
+
+        int affectedRow = _flashCardController.DeleteFlashCard(deleteFlashCard);
         _visual.RenderResult(affectedRow);
     }
 

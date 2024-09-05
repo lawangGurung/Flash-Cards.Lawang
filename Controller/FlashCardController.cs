@@ -100,4 +100,25 @@ public class FlashCardController
         }
         return 0;
     }
+
+    public int DeleteFlashCard(FlashCardDTO flashCardDTO)
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            string deleteSQL = 
+                @"DELETE FROM flashcards
+                WHERE Id = @id";
+            
+            var param = new {@id = flashCardDTO.Id};
+
+            return connection.Execute(deleteSQL, param);
+        }
+        catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return 0;
+    }
 }
