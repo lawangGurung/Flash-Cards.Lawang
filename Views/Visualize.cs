@@ -122,4 +122,17 @@ public class Visualize
         AnsiConsole.Write(table);
         
     }
+
+    public void RenderQuestion(FlashCard flashCard, Option option)
+    {
+        var table = new Table().
+            Border(TableBorder.AsciiDoubleHead)
+            .BorderColor(Color.Cornsilk1)
+            .AddColumn("Front")
+            .Title(option.Display)
+            .AddRow(flashCard.Front);
+
+        AnsiConsole.Write(table);
+
+    }
 }

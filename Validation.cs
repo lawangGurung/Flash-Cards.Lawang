@@ -230,4 +230,28 @@ public class Validation
         } while (true);
     }
 
+    public string? ValidateUserAnswer()
+    {
+        AnsiConsole.MarkupLine("[green]Input your answer to this card.[/]");
+        AnsiConsole.MarkupLine("[grey](Press '0' to exit.)[/]");
+
+        var answer = Console.ReadLine()?.Trim();
+        do
+        {
+            if(answer == "0")
+            {
+                return null;
+            }
+            else if(!string.IsNullOrEmpty(answer))
+            {
+                return answer;
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
+                answer = Console.ReadLine()?.Trim();
+            }
+        }while(true);
+    }
+
 }

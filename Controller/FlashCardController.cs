@@ -9,14 +9,14 @@ public class FlashCardController
     private readonly string _connectionString;
     public FlashCardController(string cs)
     {
-       _connectionString = cs; 
+        _connectionString = cs;
     }
     public void CreateFlashCardTable()
     {
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string createSQL = 
+            string createSQL =
                 @"IF NOT EXISTS
                     (
                     SELECT * FROM sys.tables
@@ -28,28 +28,37 @@ public class FlashCardController
                     Front VARCHAR(50) NOT NULL,
                     Back VARCHAR(50) NOT NULL,
                     StackId INT,
-                    FOREIGN KEY(StackId) REFERENCES stacks(Id)
+                    FOREIGN KEY(StackId) REFERENCES stacks(Id) ON DELETE CASCADE
                     );
                 END";
 
             connection.Execute(createSQL);
         }
-        catch(SqlException ex)
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }
     }
 
-    public List<FlashCard> GetAllFlashCard(Option chosenStack)
+    public List<FlashCard> GetAllFlashCard(Option? chosenStack = null)
     {
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string getAllSQL = $@"SELECT * FROM flashcards WHERE StackId = {chosenStack.Value}";
+            string getAllSQL;
+
+            if (chosenStack != null)
+            {
+                getAllSQL = $@"SELECT * FROM flashcards WHERE StackId = {chosenStack.Value}";
+            }
+            else
+            {
+                getAllSQL = @"SELECT * FROM flashcards";
+            }
 
             return connection.Query<FlashCard>(getAllSQL).ToList();
         }
-        catch(SqlException ex)
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }
@@ -62,16 +71,16 @@ public class FlashCardController
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string createSQL = 
+            string createSQL =
                 @"INSERT INTO flashcards
                 (Front, Back, StackId)
                 VALUES (@front, @back, @id)";
 
-            var param = new {@front = flashCardDTO.Front, @back = flashCardDTO.Back, @id = Id};
+            var param = new { @front = flashCardDTO.Front, @back = flashCardDTO.Back, @id = Id };
 
             return connection.Execute(createSQL, param);
         }
-        catch(SqlException ex)
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }
@@ -84,17 +93,18 @@ public class FlashCardController
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string updateSQL = 
+            string updateSQL =
                 @"UPDATE flashcards
                 SET Front = @front,
                 Back = @back
                 WHERE Id = @id";
 
-            var param = new {@id = flashCardDTO.Id, @front = flashCardDTO.Front, @back = flashCardDTO.Back};
+            var param = new { @id = flashCardDTO.Id, @front = flashCardDTO.Front, @back = flashCardDTO.Back };
 
             return connection.Execute(updateSQL, param);
 
-        }catch(SqlException ex)
+        }
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }
@@ -106,15 +116,15 @@ public class FlashCardController
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string deleteSQL = 
+            string deleteSQL =
                 @"DELETE FROM flashcards
                 WHERE Id = @id";
-            
-            var param = new {@id = flashCardDTO.Id};
+
+            var param = new { @id = flashCardDTO.Id };
 
             return connection.Execute(deleteSQL, param);
         }
-        catch(SqlException ex)
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }

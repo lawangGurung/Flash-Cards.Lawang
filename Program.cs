@@ -13,5 +13,8 @@ stackController.CreateStackTable();
 var flashCardController = new FlashCardController(connectionString);
 flashCardController.CreateFlashCardTable();
 
-var manager = new ApplicationManager(visualize, validation, stackController, flashCardController);
+var studyController = new StudyController(connectionString);
+studyController.CreateStudyTable();
+
+var manager = new ApplicationManager(visualize, validation, stackController, flashCardController, studyController);
 manager.Start();
