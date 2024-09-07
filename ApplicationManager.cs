@@ -93,10 +93,9 @@ public class ApplicationManager
                     }
                 }while(true);
 
-
-                // StudySession(flashCards, stacks);
                 break;
             case 4:
+                StudySessionData();
                 break;
             case 0:
                 return true;
@@ -191,8 +190,49 @@ public class ApplicationManager
 
             Console.ReadLine();
         } while (true);
+    }
 
-
+    private void StudySessionData()
+    {
+        var listOfOption = new List<Option>()
+        {
+            new Option("View all Study Session", 1),
+            new Option("View number of sessions per month per stack", 2),
+            new Option("View average score per month per stack", 3),
+            new Option("Exit", 0)
+        };
+        bool exitStudySession = false;
+        do
+        {
+            Console.Clear();
+            var selectedOption = _validation.ChooseOption(listOfOption, "Choose Study session data", "STUDY - SESSION DATA");
+            switch(selectedOption.Value)
+            {
+                case 1:
+                    Console.Clear();
+                    _studyController.ViewAllStudySession();
+                    AnsiConsole.Markup("[grey bold](press Enter to continue)[/]");
+                    Console.ReadLine();
+                    break;
+                case 2:
+                    Console.Clear();
+                    int year = _validation.GetYear();
+                    if(year == 0)
+                    {
+                        break;
+                    }
+                    _studyController.ViewNumberOfSessionsPerMonthPerStack(year);
+                    Console.WriteLine();
+                    AnsiConsole.Markup("[grey bold](PRESS 'ENTER' TO CONTINUE.)[/]");
+                    Console.ReadLine();
+                    break;
+                case 3:
+                    break;
+                case 0:
+                    exitStudySession = true;
+                    break;
+            }
+        }while(!exitStudySession);
     }
 
 }

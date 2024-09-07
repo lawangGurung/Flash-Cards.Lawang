@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using Flash_Cards.Lawang.Models;
@@ -251,6 +252,35 @@ public class Validation
                 AnsiConsole.MarkupLine("[red bold]Please don't enter the empty or null value.[/]");
                 answer = Console.ReadLine()?.Trim();
             }
+        }while(true);
+    }
+
+    public int GetYear()
+    {
+        AnsiConsole.MarkupLine("[blue bold]--------------------------------------------[/]");
+        AnsiConsole.MarkupLine("[green bold]Input a year in format 'YYYY'[/]");
+        AnsiConsole.MarkupLine("[blue bold]--------------------------------------------[/]");
+        AnsiConsole.MarkupLine("[grey](Press '0' to exit.)[/]");
+        Console.WriteLine();
+
+        var userInput = Console.ReadLine()?.Trim();
+        DateTime year;
+
+        do
+        {
+            if(userInput == "0")
+            {
+                return 0;
+            }
+            else if(DateTime.TryParseExact(userInput, "yyyy", CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out year))
+            {
+                return year.Year;
+            }
+
+            Console.WriteLine();
+            AnsiConsole.MarkupLine("[red bold]Please Enter the year in correct format[/]");
+            userInput = Console.ReadLine()?.Trim();
+
         }while(true);
     }
 
