@@ -137,15 +137,15 @@ public class StudyController
                 JOIN dbo.stacks s
                 ON s.Id = data.StackId";
 
-                var table = new Table()
-                    .Border(TableBorder.Ascii)
-                    .Expand()
-                    .BorderColor(Color.Aqua)
-                    .ShowRowSeparators()
-                    .Title($"Total Session per month for: {year}", Color.CadetBlue);
+            var table = new Table()
+                .Border(TableBorder.Ascii)
+                .Expand()
+                .BorderColor(Color.Aqua)
+                .ShowRowSeparators()
+                .Title($"Total Session per month for: {year}", Color.CadetBlue);
 
-                table.AddColumns(new TableColumn[]
-                {
+            table.AddColumns(new TableColumn[]
+            {
                     new TableColumn("[darkgreen bold]Stack Name[/]").Centered(),
                     new TableColumn("[darkcyan bold]January[/]").Centered(),
                     new TableColumn("[darkcyan bold]February[/]").Centered(),
@@ -159,10 +159,24 @@ public class StudyController
                     new TableColumn("[darkcyan bold]October[/]").Centered(),
                     new TableColumn("[darkcyan bold]November[/]").Centered(),
                     new TableColumn("[darkcyan bold]December[/]").Centered()
-                });
+            });
 
-                var reader = connection.ExecuteReader(readSQL);
-                while(reader.Read())
+            var reader = connection.ExecuteReader(readSQL);
+            if (!reader.Read())
+            {
+                Panel nullPanel = new Panel(new Markup("[red bold]STUDY-SESSION TABLE IS EMPTY!!![/]"))
+                .Border(BoxBorder.Heavy)
+                .BorderColor(Color.IndianRed1_1)
+                .Padding(1, 1, 1, 1)
+                .Header("Result");
+
+
+                AnsiConsole.Write(nullPanel);
+                return;
+            }
+            else
+            {
+                while (reader.Read())
                 {
                     table.AddRow(
                         reader.GetString(0),
@@ -182,6 +196,8 @@ public class StudyController
                 }
 
                 AnsiConsole.Write(table);
+            }
+
         }
         catch (Exception ex)
         {
@@ -194,7 +210,7 @@ public class StudyController
         try
         {
             using var connection = new SqlConnection(_connectionString);
-            string readSQL = 
+            string readSQL =
                 $@"SELECT
                     stacks.Name AS Stack_Name,
                     ISNULL([January], 0) AS [January],
@@ -219,16 +235,16 @@ public class StudyController
                 PIVOT(AVG(AverageScore) FOR Month IN([January], [February], [March], [April], [May], [June], [July], [August], [September], [October], [November], [December])) AS data
                 JOIN stacks
                 ON stacks.Id = StackId";
-        
-                 var table = new Table()
-                    .Border(TableBorder.Ascii)
-                    .Expand()
-                    .BorderColor(Color.Aqua)
-                    .ShowRowSeparators()
-                    .Title($"Average per month for: {year}", Color.CadetBlue);
 
-                table.AddColumns(new TableColumn[]
-                {
+            var table = new Table()
+               .Border(TableBorder.Ascii)
+               .Expand()
+               .BorderColor(Color.Aqua)
+               .ShowRowSeparators()
+               .Title($"Average per month for: {year}", Color.CadetBlue);
+
+            table.AddColumns(new TableColumn[]
+            {
                     new TableColumn("[darkgreen bold]Stack Name[/]").Centered(),
                     new TableColumn("[darkcyan bold]January[/]").Centered(),
                     new TableColumn("[darkcyan bold]February[/]").Centered(),
@@ -242,10 +258,24 @@ public class StudyController
                     new TableColumn("[darkcyan bold]October[/]").Centered(),
                     new TableColumn("[darkcyan bold]November[/]").Centered(),
                     new TableColumn("[darkcyan bold]December[/]").Centered()
-                });
+            });
 
-                var reader = connection.ExecuteReader(readSQL);
-                while(reader.Read())
+            var reader = connection.ExecuteReader(readSQL);
+            if (!reader.Read())
+            {
+                Panel nullPanel = new Panel(new Markup("[red bold]STUDY-SESSION TABLE IS EMPTY!!![/]"))
+                .Border(BoxBorder.Heavy)
+                .BorderColor(Color.IndianRed1_1)
+                .Padding(1, 1, 1, 1)
+                .Header("Result");
+
+
+                AnsiConsole.Write(nullPanel);
+                return;
+            }
+            else
+            {
+                while (reader.Read())
                 {
                     table.AddRow(
                         reader.GetString(0),
@@ -265,9 +295,11 @@ public class StudyController
                 }
 
                 AnsiConsole.Write(table);
+            }
+
 
         }
-        catch(SqlException ex)
+        catch (SqlException ex)
         {
             Console.WriteLine(ex.Message);
         }
