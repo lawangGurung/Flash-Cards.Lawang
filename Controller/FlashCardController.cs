@@ -88,6 +88,40 @@ public class FlashCardController
         return 0;
     }
 
+    public void SeedValueForTesting()
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            string createSQL = 
+                @"
+                IF NOT EXISTS(SELECT 1 FROM flashcards)
+                BEGIN
+                    INSERT INTO flashcards
+                        (Front, Back, StackId)
+                    VALUES 
+                        ('Hola', 'Hello', 1),
+                        ('Adios', 'Bye', 1),
+                        ('Manzana', 'Apple', 1),
+                        ('Gata', 'Cat', 1),
+                        ('Bonjour', 'Hello', 2),
+                        ('Au revoir', 'Bye', 2),
+                        ('Pomme', 'Apple', 2),
+                        ('Chatte', 'Cat', 2),
+                        ('Ciao', 'Hello', 3),
+                        ('Arrivederci', 'Good Bye', 3),
+                        ('Mela', 'Apple', 3),
+                        ('Gatta', 'Cat', 3)
+                END";
+                
+                connection.Execute(createSQL);
+        }
+        catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
     public int UpdateFlashCard(FlashCardDTO flashCardDTO)
     {
         try

@@ -10,8 +10,14 @@ var validation = new Validation();
 var stackController  = new StackController(connectionString);
 stackController.CreateStackTable();
 
+//This value is added just for testing
+stackController.SeedValueForTesting();
+
 var flashCardController = new FlashCardController(connectionString);
 flashCardController.CreateFlashCardTable();
+
+//This value is added just for testing
+flashCardController.SeedValueForTesting();
 
 var studyController = new StudyController(connectionString);
 studyController.CreateStudyTable();

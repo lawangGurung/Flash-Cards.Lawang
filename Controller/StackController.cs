@@ -62,6 +62,28 @@ public class StackController
         return rowsAffected;
     }
 
+    public void SeedValueForTesting()
+    {
+        try
+        {
+            string insertSQL = 
+                @"
+                IF NOT EXISTS(SELECT 1 FROM stacks)
+                BEGIN
+                    INSERT INTO stacks
+                    (Name)
+                    VALUES ('Spanish'),
+                           ('French'),
+                           ('Italian')
+                END";
+            using var connection = new SqlConnection(_connectionString);
+            connection.Execute(insertSQL);
+        }
+        catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
     public List<Stack> GetAllStacks()
     {
         try
