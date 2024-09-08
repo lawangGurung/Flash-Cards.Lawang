@@ -227,6 +227,16 @@ public class ApplicationManager
                     Console.ReadLine();
                     break;
                 case 3:
+                    Console.Clear();
+                    year = _validation.GetYear();
+                    if(year == 0)
+                    {
+                        break;
+                    }
+                    _studyController.ViewAverageOfSessionPerMonthPerStack(year);
+                    Console.WriteLine();
+                    AnsiConsole.Markup("[grey bold](PRESS 'ENTER' TO CONTINUE.)[/]");
+                    Console.ReadLine();
                     break;
                 case 0:
                     exitStudySession = true;

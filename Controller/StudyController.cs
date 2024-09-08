@@ -188,4 +188,88 @@ public class StudyController
             Console.WriteLine(ex.Message);
         }
     }
+
+    public void ViewAverageOfSessionPerMonthPerStack(int year)
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            string readSQL = 
+                $@"SELECT
+                    stacks.Name AS Stack_Name,
+                    ISNULL([January], 0) AS [January],
+                    ISNULL([February], 0) AS [February],
+                    ISNULL([March], 0) AS [March],
+                    ISNULL([April], 0) AS [April],
+                    ISNULL([May], 0) AS [May],
+                    ISNULL([June], 0) AS [June],
+                    ISNULL([July], 0) AS [July], 
+                    ISNULL([August], 0) AS [August],
+                    ISNULL([September], 0) AS [September],
+                    ISNULL([October], 0) AS [October],
+                    ISNULL([November], 0) AS [November],
+                    ISNULL([December], 0) AS [December]
+                FROM
+                (
+                    SELECT StackId AS StackId, AVG(Score) AS AverageScore, DATENAME(MONTH, Date) AS [Month]
+                    FROM Study_Sessions
+                    WHERE YEAR(Date) = {year}
+                    GROUP BY DATENAME(MONTH, Date), StackId
+                ) AS Source
+                PIVOT(AVG(AverageScore) FOR Month IN([January], [February], [March], [April], [May], [June], [July], [August], [September], [October], [November], [December])) AS data
+                JOIN stacks
+                ON stacks.Id = StackId";
+        
+                 var table = new Table()
+                    .Border(TableBorder.Ascii)
+                    .Expand()
+                    .BorderColor(Color.Aqua)
+                    .ShowRowSeparators()
+                    .Title($"Average per month for: {year}", Color.CadetBlue);
+
+                table.AddColumns(new TableColumn[]
+                {
+                    new TableColumn("[darkgreen bold]Stack Name[/]").Centered(),
+                    new TableColumn("[darkcyan bold]January[/]").Centered(),
+                    new TableColumn("[darkcyan bold]February[/]").Centered(),
+                    new TableColumn("[darkcyan bold]March[/]").Centered(),
+                    new TableColumn("[darkcyan bold]April[/]").Centered(),
+                    new TableColumn("[darkcyan bold]May[/]").Centered(),
+                    new TableColumn("[darkcyan bold]June[/]").Centered(),
+                    new TableColumn("[darkcyan bold]July[/]").Centered(),
+                    new TableColumn("[darkcyan bold]August[/]").Centered(),
+                    new TableColumn("[darkcyan bold]September[/]").Centered(),
+                    new TableColumn("[darkcyan bold]October[/]").Centered(),
+                    new TableColumn("[darkcyan bold]November[/]").Centered(),
+                    new TableColumn("[darkcyan bold]December[/]").Centered()
+                });
+
+                var reader = connection.ExecuteReader(readSQL);
+                while(reader.Read())
+                {
+                    table.AddRow(
+                        reader.GetString(0),
+                        reader.GetInt32(1).ToString(),
+                        reader.GetInt32(2).ToString(),
+                        reader.GetInt32(3).ToString(),
+                        reader.GetInt32(4).ToString(),
+                        reader.GetInt32(5).ToString(),
+                        reader.GetInt32(6).ToString(),
+                        reader.GetInt32(7).ToString(),
+                        reader.GetInt32(8).ToString(),
+                        reader.GetInt32(9).ToString(),
+                        reader.GetInt32(10).ToString(),
+                        reader.GetInt32(11).ToString(),
+                        reader.GetInt32(12).ToString()
+                    );
+                }
+
+                AnsiConsole.Write(table);
+
+        }
+        catch(SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
